@@ -1,0 +1,12 @@
+---
+- name: install Hyper-V features
+  hosts: windows
+
+  tasks:
+
+    - name: install selected feature
+      win_feature:
+        name: Hyper-V
+        include_sub_features: yes
+        include_management_tools: yes
+        state: present

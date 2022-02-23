@@ -1,0 +1,17 @@
+---
+ - gather_facts: yes
+   hosts: all
+ 
+   tasks:
+   - name: Set Windows basic config
+     ansible.windows.win_shell: |
+      Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
+      Set-WinUserLanguageList -LanguageList 'de-DE' -Force
+      Set-TimeZone -Id 'Central European Standard Time' -PassThru -Verbose
+      reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1" 
+      New-Item -Path 'HKCU:\Software\Policies\Microsoft\Windows\' -Name 'OOBE' -Force
+      New-ItemProperty -Path 'HKCU:\Software\Policies\Microsoft\Windows\OOBE' -Name 'DisablePrivacyExperience' -Value '1' -Force
+      New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OOBE' -Name 'DisablePrivacyExperience' -Value '1' -Force
+      New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Hidden' -PropertyType 'DWord' -Value '1' -Force
+      New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'HideFileExt' -PropertyType 'DWord' -Value '0' -Force
+      New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -PropertyType 'DWord' -Value '1' -Force   

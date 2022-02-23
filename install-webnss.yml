@@ -1,0 +1,12 @@
+---
+- name: install Hyper-V features
+  hosts: windows
+
+  tasks:
+
+  - name: Install Remote Desktop Connection Manager from msi with a permanent log
+    ansible.windows.win_package:
+      path: https://nsproducts.azureedge.net/nss-14/en/NetSupport%20School.msi
+      product_id: '{F0C06833-A19C-4DA7-872C-563971454B59}'
+      state: present
+      log_path: c:\logs\nss-{{lookup('pipe', 'date +%Y%m%dT%H%M%S')}}.log

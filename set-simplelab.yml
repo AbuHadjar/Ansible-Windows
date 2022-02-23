@@ -1,0 +1,22 @@
+---
+ - gather_facts: yes
+   hosts: all
+
+   tasks:
+   - name: Set configuration for AutomatedLab and check soruces
+     ansible.windows.win_shell: |
+      $w10iso = "C:\LabSources\ISOs\W10ENT.iso"
+      if (Test-Path $w10iso) {
+      Write-Host "Windows 10 iso exists, nothing to do here"
+      } else {
+      Write-Host "Windows 10 iso doesn't exist, will try to download"
+      $wwwiso = 'https://software-download.microsoft.com/download/sg/444969d5-f34g-4e03-ac9d-1f9786c69161/19044.1288.211006-0501.21h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+      Invoke-WebRequest -Uri $wwwiso -OutFile $w10iso
+      }
+      
+      New-LabDefinition -Name SimpleLab -DefaultVirtualizationEngine HyperV
+      Set-LabInstallationCredential -Username 'localadm' -Password 'Passw0rd!'
+      Add-LabMachineDefinition -Name W10Enterprise -Memory 1GB -OperatingSystem 'Windows 10 Enterprise Evaluation'
+      Install-Lab -NoValidation -Verbose
+      }
+      

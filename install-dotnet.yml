@@ -1,0 +1,12 @@
+---
+- name: install NET-Framework
+  hosts: all
+
+  tasks:
+
+    - name: install NET-Framework
+      win_feature:
+        name:
+        - NET-Framework-Features
+        - NET-Framework-Core
+        state: present

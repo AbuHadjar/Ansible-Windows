@@ -1,0 +1,22 @@
+---
+ - gather_facts: yes
+   hosts: all
+
+   tasks:
+   - name: Ensure the required NuGet package provider version is installed
+     win_shell: Find-PackageProvider -Name Nuget -ForceBootstrap -IncludeDependencies -Force
+
+   - name: Add a powershell module - AutomatedLab
+     win_psmodule:
+      name: AutomatedLab
+      state: present
+      skip_publisher_check: yes
+      allow_clobber: yes
+   - name: Set configuration for AutomatedLab and check soruces
+     ansible.windows.win_shell: |
+      [Environment]::SetEnvironmentVariable('AUTOMATEDLAB_TELEMETRY_OPTIN', 'false', 'Machine')
+      $env:AUTOMATEDLAB_TELEMETRY_OPTIN = 'false'
+      New-LabSourcesFolder -Drive C
+      Set-PSFConfig -Module 'AutomatedLab' -Name DisableWindowsDefender -Value $true -Initialize -Validation bool -Description 'Indicates that Windows Defender should be disabled on the lab VMs' 
+      Enable-LabHostRemoting -Force
+      
